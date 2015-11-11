@@ -1,0 +1,32 @@
+---
+- name: test the config template
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  user: root
+  tasks:
+    - name: run config template json
+      config_template:
+        src: templates/test.conf.j2
+        dest: /tmp/rendered-config-template.conf
+        config_type: ini
+        config_overrides: "{{ config_overrides }}"
+  vars:
+   config_overrides:
+     global:
+       no-index: true
+       pre: true
+       timeout: 120
+       trusted-host: 
+         - OtherThings1
+         - OtherThings2
+     install:
+       upgrade: true
+       allow_all_external: true
+       find-links:
+         - http://172.29.236.100:8181/os-releases/11.2.9/
+         - ~/things
+       set_test: 
+         ? var1
+         ? var2
+         ? extra1

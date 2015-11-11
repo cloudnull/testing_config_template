@@ -1,0 +1,42 @@
+---
+- name: test multi-task lookup method
+  hosts: all
+  gather_facts: false
+  user: root
+  tasks:
+    - name: run config template yaml
+      copy:
+        content: "{{ lookup('template', 'templates/test.yaml.j2', convert_data=False) | from_yaml | combine(config_overrides, recursive=True) | to_nice_yaml }}"
+        dest: /tmp/rendered-config-template.yaml2
+    - name: run config template json
+      copy:
+        content: "{{ lookup('template', 'templates/test.json.j2', convert_data=False) | from_json | combine(config_overrides, recursive=True) | to_nice_json }}"
+        dest: /tmp/rendered-config-template.json2
+  vars:
+   things: this is a jina2 var
+   config_overrides:
+     ah: ha
+     section1:
+       key1: s1 things
+       key2: "s2 {{ things }} replacement var"
+       iterator_item:
+         - thing1
+         - thing2
+         - thing3
+       dict_item:
+         test: things
+         test: 123
+     section2:
+       key1: s2 things
+       key2: "s2 {{ things }} replacement var"
+     other:
+       blah: 9000
+     list_op:
+       shucks:
+         - 9000
+         - 9001
+         - 9002
+     DEFAULT:
+       f: 22
+     default2:
+       a: 1
