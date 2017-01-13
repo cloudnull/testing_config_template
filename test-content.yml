@@ -1,0 +1,15 @@
+---
+- name: test the config template
+  hosts: all
+  gather_facts: false
+  user: root
+  tasks:
+    - name: run config template ini
+      config_template:
+        content: "{{ lookup('pipe', 'curl ' + aodh_policy_file_url) | string }}"
+        dest: /tmp/rendered-config-template.json
+        config_type: ini
+        config_overrides: "{{ config_overrides }}"
+  vars:
+    aodh_policy_file_url: "https://git.openstack.org/cgit/openstack/aodh/plain/etc/aodh/policy.json?h=master"
+    config_overrides: {}
