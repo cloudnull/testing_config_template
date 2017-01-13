@@ -6,11 +6,12 @@
   tasks:
     - name: run config template ini
       config_template:
-        content: "{{ lookup('pipe', 'curl ' + aodh_policy_file_url) | string }}"
+        content: "{{ url_content | to_json }}"
         dest: /tmp/rendered-config-template.json
         config_type: json
         config_overrides: "{{ config_overrides }}"
   vars:
     aodh_policy_file_url: "https://git.openstack.org/cgit/openstack/aodh/plain/etc/aodh/policy.json?h=master"
+    url_content: "{{ lookup('url', aodh_policy_file_url, wantlist=True) | join('\n') }}"
     config_overrides:
       x: 123
